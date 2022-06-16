@@ -12,7 +12,7 @@ module.exports = {
     bike: async (_, { page = 1, vehicleType, bikeId }, { dataSources, username }) => {
       if (!username) return new AuthenticationError('Authentication token must be passed as a Bearer token in the Authorization header');
       const bike = await dataSources.bikeAPI.getBike(page, vehicleType, bikeId);
-      return bike;
+      return bike ?? null;
     },
     // bikes: async (parent, { pageSize = 10, after }, { dataSources }) => {
     //   const allBikes = await dataSources.bikeAPI.getBikes();
@@ -40,19 +40,4 @@ module.exports = {
       return response
     }
   },
-  // User: {
-  //   trips: async (_, __, { dataSources }) => {
-  //     // get ids of launches by user
-  //     const launchIds = await dataSources.userAPI.getLaunchIdsByUser();
-
-  //     if (!launchIds.length) return [];
-
-  //     // look up those launches by their ids
-  //     return (
-  //       dataSources.launchAPI.getLaunchesByIds({
-  //         launchIds,
-  //       }) || []
-  //     );
-  //   },
-  // },
 };

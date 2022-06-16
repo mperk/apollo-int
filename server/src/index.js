@@ -25,13 +25,17 @@ const dataSources = () => ({
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({req}) => {
+  context: ({ req }) => {
     // simple auth check on every request
     const auth = (req.headers && req.headers.authorization) || '';
     const token = auth.replace('Bearer ', '')
     if (!token) return null;
-    const { username } = jsonwebtoken.verify(token, "test")
-    return { username };
+    try {
+      const { username } = jsonwebtoken.verify(token, "test")
+      return { username };
+    } catch (e) {
+      return null;
+    }
   },
   dataSources,
   playground: true,

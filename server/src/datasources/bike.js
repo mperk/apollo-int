@@ -28,12 +28,13 @@ class BikeAPI extends RESTDataSource {
             last_updated: data.last_updated,
             ttl: data.ttl,
             data: Array.isArray(data?.data?.bikes) ? data?.data?.bikes.map(bike => this.bikeReducer(bike)) : this.bikeReducer(data?.data?.bike),
-            // totalCount: data.total_count,
-            // nextPage: data.nextPage
+            total_count: data.total_count,
+            nextPage: data.nextPage
         }
     }
 
     bikeReducer(bike) {
+        if(!bike) return null;
         return {
             bike_id: bike.bike_id,
             lat: bike.lat,

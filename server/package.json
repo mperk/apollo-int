@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "start": "nodemon src/index.js",
-    "start:ci": "node src/index.js"
+    "start:ci": "node src/index.js",
+    "generate-gql-types": "graphql-codegen"
   },
   "author": "",
   "license": "ISC",
@@ -28,8 +29,14 @@
   },
   "devDependencies": {
     "@apollo/rover": "^0.2.0",
+    "@graphql-codegen/cli": "^2.6.2",
+    "@graphql-codegen/typescript": "^2.5.1",
+    "@graphql-codegen/typescript-operations": "^2.4.2",
+    "@graphql-codegen/typescript-react-apollo": "^3.2.16",
     "apollo-link": "^1.2.3",
     "apollo-link-http": "^1.5.5",
+    "graphql-codegen": "^0.4.0",
+    "graphql-codegen-typescript-react-apollo": "^0.18.2",
     "jest": "^25.0.0",
     "nock": "^10.0.2",
     "node-fetch": "^2.2.1",

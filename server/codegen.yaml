@@ -1,0 +1,22 @@
+schema: "./src/schema.js" # GraphQL types (input file)
+generates:
+  ./gql-bike-types.ts: # Typescript types (output generated file)
+    plugins: # List of needed plugins (installed as devDeps)
+      - typescript
+      - typescript-operations
+    config:
+      declarationKind:
+          union: type
+          type: interface
+          input: interface
+          scalar: interface
+          arguments: interface
+          interface: interface
+      enumsAsTypes: true
+      includeDirectives: true
+      commentDescriptions: true
+      flattenGeneratedTypes: true
+      avoidOptionals:
+          field: false
+          object: false
+          inputValue: false

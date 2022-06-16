@@ -11,26 +11,20 @@ const typeDefs = gql`
     createUser(username: String!, password: String!): User
   }
 
-  """
-  Simple wrapper around our list of launches that contains a cursor to the
-  last item in the list. Pass this cursor to the launches query to fetch results
-  after these.
-  """
-
   type ResponseBike{
     last_updated: String
     ttl: Int
     data: Bike
-    # totalCount: Int
-    # nextPage: Boolean
+    total_count: Int
+    nextPage: Boolean
   }
 
   type ResponseBikes{
     last_updated: String
     ttl: Int
     data: [Bike!]!
-    # totalCount: Int
-    # nextPage: Boolean
+    total_count: Int
+    nextPage: Boolean
   }
 
   type Bike{
