@@ -1,11 +1,10 @@
 import { gql, useQuery } from '@apollo/client';
-import { Link, RouteComponentProps } from '@reach/router';
-import React, { Fragment, useEffect, useState } from 'react'
-import styled, { css } from 'react-emotion';
-import { Button, Loading } from '../components';
+import { RouteComponentProps } from '@reach/router';
+import React, { Fragment, useEffect, useMemo, useState } from 'react'
+import styled from 'react-emotion';
+import { Loading } from '../components';
 import BikeTile from '../components/bike-tile';
 import { Modal } from '../components/modal/modal';
-import { unit } from '../styles';
 import * as BikeTypes from '../__generated__/gql-bike-types';
 
 export const BIKE_TILE_DATA = gql`
@@ -35,6 +34,7 @@ interface BikesProps extends RouteComponentProps { }
 const Bikes: React.FC<BikesProps> = () => {
     const [vehicleTypeFilter, setVehicleTypeFilter] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [ttl, setTtl] = React.useState(0);
     const {
         data,
         loading,
@@ -44,7 +44,13 @@ const Bikes: React.FC<BikesProps> = () => {
         variables: {
             page: currentPage,
             vehicleType: vehicleTypeFilter
-        }
+        },
+        onCompleted: (data) => {
+            if (data.bikes?.ttl) {
+                setTtl(data.bikes.ttl);
+            }
+        },
+        notifyOnNetworkStatusChange: true
     });
 
     const [modal, setModal] = useState(false);
@@ -53,16 +59,33 @@ const Bikes: React.FC<BikesProps> = () => {
 
     const openModal = (bike_id: string) => {
         setCurrentBikeId(bike_id);
-        setModal(!modal)
+        setModal(!modal);
     }
 
     const handleVehicleTypeSelect = (e: any) => {
         setVehicleTypeFilter(e.target.value);
+        setCurrentPage(1);
+        refetch();
     };
 
     useEffect(() => {
-        refetch()
-    }, [vehicleTypeFilter])
+        if (ttl > 0) {
+            const timer = setInterval(() => setTtl(ttl - 1), 1000);
+            return () => clearInterval(timer);
+        }
+    }, [ttl]);
+
+    useMemo(() => {
+        if(ttl === 0) refetch();
+    }, [ttl])
+
+    // useEffect(() => {
+    //     if (ttl === 0) {
+    //         console.log("00000000000000")
+    //         setTtl(0)
+    //         refetch();
+    //     }
+    // }, [ttl]);
 
     if (loading) return <Loading />;
     if (error || !data) return <p>{error?.message}</p>;
@@ -85,7 +108,7 @@ const Bikes: React.FC<BikesProps> = () => {
                     </select>
                 </FilterLeftDiv>
                 <FilterRightDiv>
-                    <p>Will refresh in: {data?.bikes?.ttl}</p>
+                    <p>Will refresh in: {ttl}</p>
                     <p>Total Bookings of Listed Bikes: {data?.bikes?.total_count}</p>
                 </FilterRightDiv>
             </FilterDiv>
@@ -93,7 +116,7 @@ const Bikes: React.FC<BikesProps> = () => {
                 {data && data.bikes &&
                     data.bikes.data && Array.isArray(data.bikes.data) &&
                     data.bikes.data.map((bike: any) => (
-                        <StyledDiv key={bike.bike_id} >
+                        <StyledDiv >
                             {bike.bike_id} -
                             {bike.vehicle_type} -
                             <button type="button" onClick={() => openModal(bike.bike_id)}>
@@ -104,9 +127,9 @@ const Bikes: React.FC<BikesProps> = () => {
             </ListDiv>
 
             <PaginationDiv>
-                <button onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
+                <button onClick={() => currentPage === 1 ? "" : setCurrentPage(currentPage - 1)}>Previous</button>
                 {currentPage} / {Math.ceil((data?.bikes?.total_count ?? 0) / 10)}
-                <button onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
+                <button onClick={() => currentPage === Math.ceil((data?.bikes?.total_count ?? 0) / 10) ? "" : setCurrentPage(currentPage + 1)}>Next</button>
             </PaginationDiv>
             <Modal isShown={modal} hide={toggle} modalContent={<BikeTile bikeId={currentBikeId} />} headerText="Bike Details" />
         </Fragment>
