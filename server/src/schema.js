@@ -22,7 +22,7 @@ const typeDefs = gql`
   type ResponseBikes{
     last_updated: String
     ttl: Int
-    data: [Bike!]!
+    data: [Bike]!
     total_count: Int
     nextPage: Boolean
   }

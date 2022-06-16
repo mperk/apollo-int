@@ -1,4 +1,3 @@
-const { paginateResults } = require('./utils');
 const bcrypt = require('bcrypt');
 const { ForbiddenError, AuthenticationError } = require('apollo-server');
 
@@ -14,15 +13,6 @@ module.exports = {
       const bike = await dataSources.bikeAPI.getBike(page, vehicleType, bikeId);
       return bike ?? null;
     },
-    // bikes: async (parent, { pageSize = 10, after }, { dataSources }) => {
-    //   const allBikes = await dataSources.bikeAPI.getBikes();
-    //   const bikes = paginateResults(allBikes, after, pageSize);
-    //   return {
-    //     bikes,
-    //     cursor: bikes.length ? bikes[bikes.length - 1].id : null,
-    //     hasMore: bikes.length === pageSize,
-    //   };
-    // },
   },
   Mutation: {
     login: async (_, { username, password }, { dataSources }) => {

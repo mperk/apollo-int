@@ -25,23 +25,22 @@ class BikeAPI extends RESTDataSource {
 
     getBikesReducer(data) {
         return {
-            last_updated: data.last_updated,
-            ttl: data.ttl,
+            last_updated: data.last_updated || "",
+            ttl: data.ttl || 0,
             data: Array.isArray(data?.data?.bikes) ? data?.data?.bikes.map(bike => this.bikeReducer(bike)) : this.bikeReducer(data?.data?.bike),
-            total_count: data.total_count,
-            nextPage: data.nextPage
+            total_count: data.total_count || 0,
+            nextPage: data.nextPage || false,
         }
     }
 
     bikeReducer(bike) {
-        if(!bike) return null;
         return {
-            bike_id: bike.bike_id,
-            lat: bike.lat,
-            lon: bike.lon,
-            is_reserved: bike.is_reserved,
-            is_disabled: bike.is_disabled,
-            vehicle_type: bike.vehicle_type,
+            bike_id: bike?.bike_id || "",
+            lat: bike?.lat || 0,
+            lon: bike?.lon || 0,
+            is_reserved: bike?.is_reserved || false,
+            is_disabled: bike?.is_disabled || false,
+            vehicle_type: bike?.vehicle_type || "",
         }
     }
 }
