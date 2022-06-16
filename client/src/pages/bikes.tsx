@@ -71,6 +71,7 @@ const Bikes: React.FC<BikesProps> = () => {
     };
 
     useEffect(() => {
+        if (!data) return;
         const timer = setInterval(() => {
             if (ttl > 0) {
                 setTtl(ttl - 1);
@@ -81,15 +82,13 @@ const Bikes: React.FC<BikesProps> = () => {
         return () => clearInterval(timer);
     }, [ttl]);
 
-    if (loading) return <Loading />;
-    if (error || !data) return <p>{error?.message}</p>;
-
     const handleSearchBikeId = (event: any) => {
         if (event.key === 'Enter') {
             setBikeIdSearch(event.target.value)
         }
     }
-
+    if (loading) return <Loading />;
+    if (error || !data) return <p>{error?.message}</p>;
     return (
         <Fragment>
             <FilterDiv>
