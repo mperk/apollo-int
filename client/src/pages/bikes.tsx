@@ -1,6 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
 import { RouteComponentProps } from '@reach/router';
-import React, { Fragment, useEffect, useMemo, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import styled from 'react-emotion';
 import { Loading } from '../components';
 import BikeTile from '../components/bike-tile';
@@ -15,8 +15,8 @@ export const BIKE_TILE_DATA = gql`
 `;
 
 export const GET_BIKES = gql`
-    query GetBikes($page: Int, $vehicleType: String) {
-        bikes(page: $page, vehicleType: $vehicleType) {
+    query GetBikes($page: Int, $vehicleType: String, $bikeId: String) {
+        bikes(page: $page, vehicleType: $vehicleType, bikeId: $bikeId) {
             last_updated
             ttl
             data {
@@ -34,6 +34,7 @@ interface BikesProps extends RouteComponentProps { }
 const Bikes: React.FC<BikesProps> = () => {
     const [vehicleTypeFilter, setVehicleTypeFilter] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [bikeIdSearch, setBikeIdSearch] = useState('');
     const [ttl, setTtl] = React.useState(0);
     const {
         data,
@@ -43,7 +44,8 @@ const Bikes: React.FC<BikesProps> = () => {
     } = useQuery<BikeTypes.Query, BikeTypes.QueryBikesArgs>(GET_BIKES, {
         variables: {
             page: currentPage,
-            vehicleType: vehicleTypeFilter
+            vehicleType: vehicleTypeFilter,
+            bikeId: bikeIdSearch
         },
         onCompleted: (data) => {
             if (data.bikes?.ttl) {
@@ -65,34 +67,26 @@ const Bikes: React.FC<BikesProps> = () => {
     const handleVehicleTypeSelect = (e: any) => {
         setVehicleTypeFilter(e.target.value);
         setCurrentPage(1);
-        refetch();
+        // refetch();
     };
 
     useEffect(() => {
-        if (ttl > 0) {
-            const timer = setInterval(() => setTtl(ttl - 1), 1000);
-            return () => clearInterval(timer);
-        }
+        const timer = setInterval(() => {
+            if (ttl > 0) {
+                setTtl(ttl - 1);
+            }
+            if (ttl === 0)
+                refetch();
+        }, 1000);
+        return () => clearInterval(timer);
     }, [ttl]);
-
-    useMemo(() => {
-        if(ttl === 0) refetch();
-    }, [ttl])
-
-    // useEffect(() => {
-    //     if (ttl === 0) {
-    //         console.log("00000000000000")
-    //         setTtl(0)
-    //         refetch();
-    //     }
-    // }, [ttl]);
 
     if (loading) return <Loading />;
     if (error || !data) return <p>{error?.message}</p>;
 
     const handleSearchBikeId = (event: any) => {
         if (event.key === 'Enter') {
-            console.log(event.target.value)
+            setBikeIdSearch(event.target.value)
         }
     }
 
@@ -113,13 +107,13 @@ const Bikes: React.FC<BikesProps> = () => {
                 </FilterRightDiv>
             </FilterDiv>
             <ListDiv>
-                {data && data.bikes &&
-                    data.bikes.data && Array.isArray(data.bikes.data) &&
+                {data && data.bikes && data.bikes.data && data.bikes.data.length > 0 &&
+                    Array.isArray(data.bikes.data) &&
                     data.bikes.data.map((bike: any) => (
-                        <StyledDiv >
-                            {bike.bike_id} -
-                            {bike.vehicle_type} -
-                            <button type="button" onClick={() => openModal(bike.bike_id)}>
+                        <StyledDiv>
+                            {bike?.bike_id} -
+                            {bike?.vehicle_type} -
+                            <button type="button" onClick={() => openModal(bike?.bike_id)}>
                                 Display
                             </button>
                         </StyledDiv>

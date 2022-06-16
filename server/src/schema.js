@@ -2,8 +2,7 @@ const { gql } = require('apollo-server');
 
 const typeDefs = gql`
   type Query {
-    bikes(page: Int, vehicleType: String): ResponseBikes
-    bike(page: Int, vehicleType: String, bikeId: String!): ResponseBike
+    bikes(page: Int, vehicleType: String, bikeId: String): ResponseBikes
   }
 
   type Mutation {
@@ -11,18 +10,10 @@ const typeDefs = gql`
     createUser(username: String!, password: String!): User
   }
 
-  type ResponseBike{
-    last_updated: String
-    ttl: Int
-    data: Bike
-    total_count: Int
-    nextPage: Boolean
-  }
-
   type ResponseBikes{
     last_updated: String
     ttl: Int
-    data: [Bike]!
+    data: [Bike]
     total_count: Int
     nextPage: Boolean
   }

@@ -3,15 +3,10 @@ const { ForbiddenError, AuthenticationError } = require('apollo-server');
 
 module.exports = {
   Query: {
-    bikes: async (_, { page = 1, vehicleType }, { dataSources, username }) => {
+    bikes: async (_, { page = 1, vehicleType, bikeId }, { dataSources, username }) => {
       if (!username) return new AuthenticationError('Authentication token must be passed as a Bearer token in the Authorization header');
-      const bikes = await dataSources.bikeAPI.getBikes(page, vehicleType);
+      const bikes = await dataSources.bikeAPI.getBikes(page, vehicleType, bikeId);
       return bikes;
-    },
-    bike: async (_, { page = 1, vehicleType, bikeId }, { dataSources, username }) => {
-      if (!username) return new AuthenticationError('Authentication token must be passed as a Bearer token in the Authorization header');
-      const bike = await dataSources.bikeAPI.getBike(page, vehicleType, bikeId);
-      return bike ?? null;
     },
   },
   Mutation: {

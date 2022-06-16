@@ -48,35 +48,19 @@ export interface MutationLoginArgs {
 
 export interface Query {
   __typename?: 'Query';
-  bike?: Maybe<ResponseBike>;
   bikes?: Maybe<ResponseBikes>;
 }
 
 
-export interface QueryBikeArgs {
-  bikeId: Scalars['String'];
-  page?: InputMaybe<Scalars['Int']>;
-  vehicleType?: InputMaybe<Scalars['String']>;
-}
-
-
 export interface QueryBikesArgs {
+  bikeId?: InputMaybe<Scalars['String']>;
   page?: InputMaybe<Scalars['Int']>;
   vehicleType?: InputMaybe<Scalars['String']>;
-}
-
-export interface ResponseBike {
-  __typename?: 'ResponseBike';
-  data?: Maybe<Bike>;
-  last_updated?: Maybe<Scalars['String']>;
-  nextPage?: Maybe<Scalars['Boolean']>;
-  total_count?: Maybe<Scalars['Int']>;
-  ttl?: Maybe<Scalars['Int']>;
 }
 
 export interface ResponseBikes {
   __typename?: 'ResponseBikes';
-  data: Array<Bike>;
+  data?: Maybe<Array<Maybe<Bike>>>;
   last_updated?: Maybe<Scalars['String']>;
   nextPage?: Maybe<Scalars['Boolean']>;
   total_count?: Maybe<Scalars['Int']>;

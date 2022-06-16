@@ -4,14 +4,14 @@ import * as BikeTypes from '../__generated__/gql-bike-types';
 import Loading from './loading';
 
 interface BikeTileProps {
-    bikeId: string,
+    bikeId?: string,
     vehicleType?: string,
     page?: number
 }
 
-export const GET_BIKE = gql`
-    query GetBike($bikeId: String!, $page: Int, $vehicleType: String) {
-        bike(bikeId: $bikeId, page: $page, vehicleType: $vehicleType) {
+export const GET_BIKES = gql`
+    query GetBikes($bikeId: String!, $page: Int, $vehicleType: String) {
+        bikes(bikeId: $bikeId, page: $page, vehicleType: $vehicleType) {
             last_updated
             ttl
             data {
@@ -29,7 +29,7 @@ export const GET_BIKE = gql`
 `;
 
 const BikeTile: React.FC<BikeTileProps> = ({ bikeId }) => {
-    const { data, loading, error } = useQuery<BikeTypes.Query, BikeTypes.QueryBikeArgs>(GET_BIKE, {
+    const { data, loading, error } = useQuery<BikeTypes.Query, BikeTypes.QueryBikesArgs>(GET_BIKES, {
         variables: {
             bikeId
         }
@@ -39,15 +39,15 @@ const BikeTile: React.FC<BikeTileProps> = ({ bikeId }) => {
 
     return (
         <div>
-            {data.bike &&
-                data.bike?.data &&
+            {bikeId && data.bikes &&
+                data.bikes?.data && data.bikes.data[0] &&
                 <div>
-                    <p><b>Bike Id: </b>{data.bike.data.bike_id}</p>
-                    <p><b>Vehicle Type: </b>{data.bike.data.vehicle_type}</p>
-                    <p><b>Lat: </b>{data.bike.data.lat}</p>
-                    <p><b>Lon: </b>{data.bike.data.lon}</p>
-                    <p><b>Is Reserved: </b>{data.bike.data.is_reserved?.toString()}</p>
-                    <p><b>Is Disabled: </b>{data.bike.data.is_disabled?.toString()}</p>
+                    <p><b>Bike Id: </b>{data.bikes.data[0].bike_id}</p>
+                    <p><b>Vehicle Type: </b>{data.bikes.data[0].vehicle_type}</p>
+                    <p><b>Lat: </b>{data.bikes.data[0].lat}</p>
+                    <p><b>Lon: </b>{data.bikes.data[0].lon}</p>
+                    <p><b>Is Reserved: </b>{data.bikes.data[0].is_reserved?.toString()}</p>
+                    <p><b>Is Disabled: </b>{data.bikes.data[0].is_disabled?.toString()}</p>
                 </div>
             }
         </div>

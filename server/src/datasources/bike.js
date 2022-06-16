@@ -6,19 +6,11 @@ class BikeAPI extends RESTDataSource {
         this.baseURL = 'https://kovan-dummy-api.herokuapp.com/';
     }
 
-    async getBikes(page, vehicleType) {
-        const response = await this.get('items', {
-            page: page,
-            vehicle_type: vehicleType ?? ""
-        });
-        return this.getBikesReducer(response);
-    }
-
-    async getBike(page, vehicleType, bikeId) {
+    async getBikes(page, vehicleType, bikeId) {
         const response = await this.get('items', {
             page: page,
             vehicle_type: vehicleType ?? "",
-            bike_id: bikeId
+            bike_id: bikeId ?? ""
         });
         return this.getBikesReducer(response);
     }
@@ -27,13 +19,14 @@ class BikeAPI extends RESTDataSource {
         return {
             last_updated: data.last_updated || "",
             ttl: data.ttl || 0,
-            data: Array.isArray(data?.data?.bikes) ? data?.data?.bikes.map(bike => this.bikeReducer(bike)) : this.bikeReducer(data?.data?.bike),
+            data: Array.isArray(data?.data?.bikes) ? data?.data?.bikes.map(bike => this.bikeReducer(bike)) : data?.data?.bike ? [this.bikeReducer(data?.data?.bike)] : null,
             total_count: data.total_count || 0,
             nextPage: data.nextPage || false,
         }
     }
 
     bikeReducer(bike) {
+        if(!bike) return null
         return {
             bike_id: bike?.bike_id || "",
             lat: bike?.lat || 0,
